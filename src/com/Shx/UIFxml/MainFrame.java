@@ -4,21 +4,28 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class MainFrame extends JFrame implements KeyListener {
-    public final int MainUi_Height = 400;
-    public final int MainUi_Width = 500;
+/**
+ * 编写人：SHX
+ * 编写时间：2019/4/6
+ * 编写目的：建立主要界面
+ * 引用资料：
+ * JavaSwing文档
+ * https://www.ibm.com/developerworks/cn/java/j-lo-boxlayout/
+ */
+public class MainFrame extends JFrame {
+    public final int MainUi_Height = 150;
+    public final int MainUi_Width = 300;
     public static final ImageIcon icon = new ImageIcon("Img/IcoImg.jpg");
     private Boolean WindowDisplayStatus = true;
 
     public MainFrame() throws HeadlessException {
         this.setTitle("桌面小程序");
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = toolkit.getScreenSize();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setIconImage(icon.getImage());
         int Screen_height = screenSize.height;
         int Screen_width = screenSize.width;
         this.setSize(MainUi_Width,MainUi_Height);
-        this.setLocation(Screen_width-MainUi_Width,Screen_height-MainUi_Height);
+        this.setLocation(Screen_width-MainUi_Width,Screen_height-MainUi_Height-30);
         this.getContentPane().setBackground(Color.white);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
@@ -30,7 +37,7 @@ public class MainFrame extends JFrame implements KeyListener {
 
             @Override
             public void windowDeactivated(WindowEvent e) {
-                setWindowDisplayStatus(false);
+//                setWindowDisplayStatus(false);
             }
 
             @Override
@@ -38,31 +45,17 @@ public class MainFrame extends JFrame implements KeyListener {
                 System.exit(0);
             }
         });
+        PanleFactory panleFactory = PanleFactory.getPanleFactory();
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
+        panel.add(panleFactory.MainFrame_NORTH());
+        panel.add(panleFactory.MainFrame_CENTER());
+        panel.add(panleFactory.MainFrame_SOUTH());
+        this.add(panel);
         PlaceTray();
-        this.addKeyListener(this);
         setWindowDisplayStatus(true);
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-        System.out.println(e.getKeyCode()+"KT");
-        if((e.getKeyCode()==17)){
-//            requestFocus();//焦点获得
-        }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        System.out.println(e.getKeyCode()+"KP");
-
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        if((e.getKeyCode() == KeyEvent.VK_ENTER&&e.isControlDown())){
-            setWindowDisplayStatus(!getWindowDisplayStatus());
-        }
-    }
     public void PlaceTray(){
         SystemTray systemTray = SystemTray.getSystemTray();
         TrayIcon test = new TrayIcon(icon.getImage(), "test", new PopupMenu());

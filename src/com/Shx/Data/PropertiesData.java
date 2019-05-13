@@ -1,4 +1,4 @@
-package com.Shx.PropertiesClass;
+package com.Shx.Data;
 /**
  * 编写人：SHX
  * 编写时间：2019/3/10
@@ -30,5 +30,13 @@ public class PropertiesData {
 
     public void setData(String data) {
         Data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "PropertiesData{" +
+                "Kay='" + Kay + '\'' +
+                ", Data='" + Data + '\'' +
+                '}';
     }
 }

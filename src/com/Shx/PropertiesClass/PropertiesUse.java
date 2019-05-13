@@ -1,5 +1,7 @@
 package com.Shx.PropertiesClass;
 
+import com.Shx.Data.MyPublicData;
+import com.Shx.Data.PropertiesData;
 import com.Shx.FileUse.FileClass;
 
 import java.io.*;
@@ -32,13 +34,15 @@ public class PropertiesUse {
         String Key;
         String Data;
         try {
-            properties.load(new FileInputStream(propertiesName));
+            InputStream in = new BufferedInputStream(new FileInputStream(propertiesName));
+            properties.load(in);
             Enumeration enumeration = properties.propertyNames();
             while (enumeration.hasMoreElements()){
                 Key = (String)enumeration.nextElement();
                 Data = properties.getProperty(Key);
                 Key_Data.add(new PropertiesData(Key,Data));
-                System.out.println(Key+"="+Data);
+//                System.out.println(Key+"="+Data);
+                in.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,6 +61,7 @@ public class PropertiesUse {
             InputStream in = new BufferedInputStream(new FileInputStream(propertiesName));
             properties.load(in);
             String value = properties.getProperty(Key);
+            in.close();
             System.out.println(Key + " = " + value);
             return new  PropertiesData(Key,value);
         } catch (IOException e) {
@@ -77,13 +82,57 @@ public class PropertiesUse {
             OutputStream outputStream = new FileOutputStream(propertiesName);
             properties.setProperty(NewData.getKay(),NewData.getData());
             properties.store(outputStream,"Update " + NewData.getKay() + " name");//变量一为添加文件，变量二为注解
+            is.close();
+            outputStream.close();
             return true;
-        } catch (FileNotFoundException e) {
+        }  catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public void updata(){
+        try {
+            OutputStream fileOutputStream = new FileOutputStream(propertiesName);
+            for (PropertiesData propertiesData:this.Read_List()){
+                properties.remove(propertiesData.getKay());
+                properties.store(fileOutputStream,"Delete'"+propertiesData.getKay());
+                fileOutputStream.close();
+            }
+            for (PropertiesData propertiesData:MyPublicData.getMyPublicDataClass().propertiesDataList){
+                WriteForData(propertiesData);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean delete(String deleteData){
+        try {
+            System.out.println(deleteData);
+            OutputStream fileOutputStream = new FileOutputStream(propertiesName);
+            properties.remove(deleteData);
+            properties.store(fileOutputStream,"Delete'"+deleteData);
+            fileOutputStream.close();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        PropertiesUse propertiesUse = new PropertiesUse();
+        propertiesUse.WriteForData(new PropertiesData("eww","asd"));
+        List<PropertiesData> list = propertiesUse.Read_List();
+        for(PropertiesData propertiesData:list){
+            System.out.println(propertiesData);
+        }
+        System.out.println("**********************************************");
+        propertiesUse.delete("159");
+        List<PropertiesData> list2 = propertiesUse.Read_List();
+        for(PropertiesData propertiesData:list2){
+            System.out.println(propertiesData);
         }
     }
 }
